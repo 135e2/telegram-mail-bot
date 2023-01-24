@@ -1,18 +1,20 @@
 from pyzmail import PyzMessage, decode_text
 
+
 class Email(object):
     def __init__(self, raw_mail_lines):
-        msg_content = b'\r\n'.join(raw_mail_lines)
-        msg =  PyzMessage.factory(msg_content)
+        msg = PyzMessage.factory(raw_mail_lines)
 
         self.subject = msg.get_subject()
-        self.sender = msg.get_address('from')
-        self.date = msg.get_decoded_header('date', '')
-        self.id = msg.get_decoded_header('message-id', '')
+        self.sender = msg.get_address("from")
+        self.date = msg.get_decoded_header("date", "")
+        self.id = msg.get_decoded_header("message-id", "")
 
         for mailpart in msg.mailparts:
-            if mailpart.is_body=='text/plain':
-                payload, used_charset=decode_text(mailpart.get_payload(), mailpart.charset, None)
+            if mailpart.is_body == "text/plain":
+                payload, used_charset = decode_text(
+                    mailpart.get_payload(), mailpart.charset, None
+                )
                 self.charset = used_charset
                 self.text = payload
                 return
