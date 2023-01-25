@@ -51,18 +51,15 @@ async def _help(update: Update, context: CallbackContext) -> None:
     if not is_owner(update):
         return
     """Send a message when the command /help is issued."""
-    help_str = """邮箱设置:
-/setting john.doe@example.com password
-/inbox
-/get mail_index
-/help get help"""
-    # help_str = "*Mailbox Setting*:\n" \
-    #            "/setting john.doe@example.com password\n" \
-    #            "/inbox\n" \
-    #            "/get mail_index"
+    help_str = """*Mailbox Settings*:
+/setting john.doe@example.com password Login (needed)
+/inbox Get mails status in INBOX
+/get $ndex Get the $index mail
+/help get help
+/list List all mails in INBOX"""
     await context.bot.send_message(
         update.message.chat_id,
-        # parse_mode=ParseMode.MARKDOWN,
+        parse_mode=ParseMode.MARKDOWN,
         text=help_str,
     )
 
@@ -113,7 +110,9 @@ async def inbox(update: Update, context: CallbackContext) -> None:
             )
             inbox_num = new_num
             await context.bot.send_message(
-                update.message.chat_id, parse_mode=ParseMode.MARKDOWN, text=reply_text
+                update.message.chat_id,
+                parse_mode=ParseMode.MARKDOWN,
+                text=reply_text,
             )
     except NameError as e:
         await context.bot.send_message(
@@ -148,6 +147,29 @@ async def get_email(update: Update, context: CallbackContext) -> None:
         logger.warning(e)
 
 
+async def list_email(update: Update, context: CallbackContext) -> None:
+    if not is_owner(update):
+        return
+    try:
+        with EmailClient(email_addr, email_passwd) as client:
+            mails = client.get_listed_mails()
+            text = ""
+            for i in mails:
+                text += f"*{mails.index(i)}*: Subject: {i[0]};\nSender: {i[1]};\nDate: {i[2]}\n\n"
+            await context.bot.send_message(
+                update.message.chat_id,
+                parse_mode=ParseMode.MARKDOWN,
+                text=text,
+            )
+    except NameError as e:
+        await context.bot.send_message(
+            update.message.chat_id,
+            parse_mode=ParseMode.MARKDOWN,
+            text="Email unset, please set valid email by the '/setting' command.",
+        )
+        logger.warning(e)
+
+
 def main():
     # Create the EventHandler and pass it your bot's token.
     bot = Bot(token=bot_token)
@@ -166,6 +188,8 @@ def main():
     application.add_handler(CommandHandler("inbox", inbox))
 
     application.add_handler(CommandHandler("get", get_email))
+
+    application.add_handler(CommandHandler("list", list_email))
 
     application.add_error_handler(error)
 

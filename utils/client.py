@@ -34,8 +34,16 @@ class EmailClient(object):
 
     def get_mail_by_index(self, index):
         list = self.get_mails_list()
-        msg_data = list[int(index)-1][1]
+        msg_data = list[int(index) - 1][1]
         return Email(msg_data[b"RFC822"])
+
+    def get_listed_mails(self):
+        list = self.get_mails_list()
+        listed_mails = []
+        for i in range(0, self.get_mails_count()):
+            email = Email(list[i][1][b"RFC822"])
+            listed_mails.append([email.subject, email.sender, email.date])
+        return listed_mails
 
     def __enter__(self):
         return self
