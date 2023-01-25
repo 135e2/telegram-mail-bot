@@ -32,10 +32,6 @@ class EmailClient(object):
     def get_mails_count(self):
         return self.number
 
-    def get_mails_unseen_count(self):
-        unseen_messages = self.server.search("UNSEEN")
-        return len(unseen_messages)
-
     def get_mail_by_index(self, index):
         list = self.get_mails_list()
         msg_data = list[int(index)-1][1]

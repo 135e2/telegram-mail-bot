@@ -88,14 +88,14 @@ def periodic_task(context: CallbackContext) -> None:
     global inbox_num
     logger.info("entering periodic task.")
     with EmailClient(email_addr, email_passwd) as client:
-        new_unseen_num = client.get_mails_unseen_count()
-        if new_unseen_num:
-            for i in range(inbox_num, inbox_num + new_unseen_num + 1):
-                mail = client.get_mail_by_index(i)
+        new_inbox_num = client.get_mails_count()
+        if new_inbox_num > inbox_num:
+            for i in range(inbox_num, inbox_num + new_inbox_num):
+                mail = client.get_mail_by_index(i + 1)
                 content = mail.__repr__()
                 for text in handle_large_text(content):
                     context.bot.send_message(context.job.context, text=text)
-            inbox_num += new_unseen_num
+            inbox_num = new_inbox_num
 
 
 def inbox(update: Update, context: CallbackContext) -> None:
