@@ -94,7 +94,7 @@ async def periodic_task(context: CallbackContext) -> None:
                 mail = client.get_mail_by_index(i + 1)
                 content = mail.__repr__()
                 for text in handle_large_text(content):
-                    await context.bot.send_message(context.job.context, text=text)
+                    await context.bot.send_message(context.job.chat_id, text=text)
             inbox_num = new_inbox_num
 
 
