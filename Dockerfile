@@ -1,11 +1,12 @@
 FROM python:3.9
 
-RUN pip install --no-cache-dir pytz python-telegram-bot==13.1 pyzmail36 imapclient
+WORKDIR /opt/workdir/telegram-mail-bot
 
 COPY utils /opt/workdir/telegram-mail-bot/utils
 COPY bot.py /opt/workdir/telegram-mail-bot/
+COPY requirements.txt /opt/workdir/telegram-mail-bot/
 
-WORKDIR /opt/workdir/telegram-mail-bot
+RUN pip install --no-cache-dir -r requirements.txt
 
 ENV OWNER_CHAT_ID=
 ENV TELEGRAM_TOKEN=
