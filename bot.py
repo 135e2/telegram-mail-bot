@@ -102,18 +102,26 @@ async def inbox(update: Update, context: CallbackContext) -> None:
     if not is_owner(update):
         return
     logger.info("received inbox command.")
-    with EmailClient(email_addr, email_passwd) as client:
-        global inbox_num
-        new_num = client.get_mails_count()
-        reply_text = (
-            "The index of newest mail is *%d*,"
-            " received *%d* new mails since last"
-            " time you checked." % (new_num, new_num - inbox_num)
-        )
-        inbox_num = new_num
+    try:
+        with EmailClient(email_addr, email_passwd) as client:
+            global inbox_num
+            new_num = client.get_mails_count()
+            reply_text = (
+                "The index of newest mail is *%d*,"
+                " received *%d* new mails since last"
+                " time you checked." % (new_num, new_num - inbox_num)
+            )
+            inbox_num = new_num
+            await context.bot.send_message(
+                update.message.chat_id, parse_mode=ParseMode.MARKDOWN, text=reply_text
+            )
+    except NameError as e:
         await context.bot.send_message(
-            update.message.chat_id, parse_mode=ParseMode.MARKDOWN, text=reply_text
+            update.message.chat_id,
+            parse_mode=ParseMode.MARKDOWN,
+            text="Email unset, please set valid email by the '/setting' command.",
         )
+        logger.warning(e)
 
 
 async def get_email(update: Update, context: CallbackContext) -> None:
@@ -125,11 +133,19 @@ async def get_email(update: Update, context: CallbackContext) -> None:
             update.message.chat_id, text="$index should be a positive number!"
         )
     logger.info("received get command.")
-    with EmailClient(email_addr, email_passwd) as client:
-        mail = client.get_mail_by_index(index)
-        content = mail.__repr__()
-        for text in handle_large_text(content):
-            await context.bot.send_message(update.message.chat_id, text=text)
+    try:
+        with EmailClient(email_addr, email_passwd) as client:
+            mail = client.get_mail_by_index(index)
+            content = mail.__repr__()
+            for text in handle_large_text(content):
+                await context.bot.send_message(update.message.chat_id, text=text)
+    except NameError as e:
+        await context.bot.send_message(
+            update.message.chat_id,
+            parse_mode=ParseMode.MARKDOWN,
+            text="Email unset, please set valid email by the '/setting' command.",
+        )
+        logger.warning(e)
 
 
 def main():
