@@ -54,7 +54,7 @@ async def _help(update: Update, context: CallbackContext) -> None:
     help_str = """*Mailbox Settings*:
 /setting john.doe@example.com password Login (needed)
 /inbox Get mails status in INBOX
-/get $ndex Get the $index mail
+/get $index Get the $index mail
 /help get help
 /list List all mails in INBOX"""
     await context.bot.send_message(
