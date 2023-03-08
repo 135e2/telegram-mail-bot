@@ -155,7 +155,7 @@ async def list_email(update: Update, context: CallbackContext) -> None:
             mails = client.get_listed_mails()
             text = ""
             for i in mails:
-                text += f"*{mails.index(i)}*: Subject: {i[0]};\nSender: {i[1]};\nDate: {i[2]}\n\n"
+                text += f"*{mails.index(i)+1}*: Subject: {i[0]};\nSender: {i[1]};\nDate: {i[2]}\n\n"
             await context.bot.send_message(
                 update.message.chat_id,
                 parse_mode=ParseMode.MARKDOWN,
