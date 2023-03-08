@@ -87,7 +87,7 @@ async def periodic_task(context: CallbackContext) -> None:
     with EmailClient(email_addr, email_passwd) as client:
         new_inbox_num = client.get_mails_count()
         if new_inbox_num > inbox_num:
-            for i in range(inbox_num, new_inbox_num + 1):
+            for i in range(inbox_num + 1, new_inbox_num + 1):
                 mail = client.get_mail_by_index(i)
                 content = mail.__repr__()
                 for text in handle_large_text(content):
