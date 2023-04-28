@@ -5,8 +5,9 @@ name = "pypi"
 
 [packages]
 pytz = "*"
-python-telegram-bot = "*"
-pyzmail36 = "*"
+pyzmail36 = ">=1.0.5"
+python-telegram-bot = ">=20.0"
+imapclient = ">=2.3.1"
 
 [dev-packages]
 pylint = "*"
